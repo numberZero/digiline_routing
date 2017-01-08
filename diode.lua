@@ -1,6 +1,8 @@
 -- © 2017 numberZero
 -- License: GNU Lesser General Public License, version 2 (or any later version)
 
+local OVERLOAD_THRESHOLD = 20.0
+
 local rules_in = {
 	[0] = {{x = -1, y = 0, z = 0}},
 	[1] = {{x = 0, y = 0, z = 1}},
@@ -24,6 +26,12 @@ local function diode_rules_out(node)
 end
 
 local function diode_action(pos, node, channel, msg)
+	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
+		digiline_routing.overheat.forget(pos)
+		minetest.dig_node(pos)
+		minetest.add_item(pos, node.name)
+		return
+	end
 	digiline:receptor_send(pos, diode_rules_out(node), channel, msg)
 end
 
@@ -45,6 +53,7 @@ minetest.register_node("digiline_routing:diode", {
 			{ -1/16, -8/16, -3/16, 1/16, -6/16, 3/16 },
 		},
 	},
+	on_destruct = digiline_routing.overheat.forget,
 	digiline = {
 		effector = {
                         action = diode_action,
