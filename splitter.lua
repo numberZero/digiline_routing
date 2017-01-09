@@ -43,23 +43,25 @@ local function splitter_cleanup(pos, node)
 end
 
 local function splitter_in_action(pos, node, channel, msg)
--- 	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
--- 		digiline_routing.overheat.forget(pos)
--- 		minetest.dig_node(pos)
--- 		minetest.add_item(pos, node.name)
--- 		return
--- 	end
--- 	digiline:receptor_send(pos, diode_rules_out(node), channel, msg)
+	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
+		minetest.dig_node(pos)
+		minetest.add_item(pos, node.name)
+		return
+	end
+	local off = minetest.facedir_to_dir(node.param2)
+	local slave = vector.add(pos, off)
+	digiline:receptor_send(slave, splitter_rules_out(node), channel, msg)
 end
 
 local function splitter_out_action(pos, node, channel, msg)
--- 	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
--- 		digiline_routing.overheat.forget(pos)
--- 		minetest.dig_node(pos)
--- 		minetest.add_item(pos, node.name)
--- 		return
--- 	end
--- 	digiline:receptor_send(pos, diode_rules_out(node), channel, msg)
+	local off = minetest.facedir_to_dir(node.param2)
+	local master = vector.subtract(pos, off)
+	if digiline_routing.overheat.heat(master) > OVERLOAD_THRESHOLD then
+		minetest.dig_node(master)
+		minetest.add_item(master, node.name)
+		return
+	end
+	digiline:receptor_send(master, splitter_rules_in(node), channel, msg)
 end
 
 minetest.register_node("digiline_routing:splitter", {
@@ -74,16 +76,15 @@ minetest.register_node("digiline_routing:splitter", {
 	node_box = {
 		type = "fixed",
 		fixed = {
--- 			{ -8/16, -8/16, -1/16, 24/16, -7/16, 1/16 },
--- 			{ -1/16, -8/16, -8/16, 1/16, -7/16, 8/16 },
--- 			{ -4/16, -8/16, -2/16, 4/16, -6/16, 2/16 },
--- 			{ -3/16, -8/16, -3/16, 3/16, -6/16, 3/16 },
--- 			{ -2/16, -8/16, -4/16, 2/16, -6/16, 4/16 },
 			{ -1/16, -8/16, 4/16, 1/16, -7/16, 24/16 },
 			{ -8/16, -8/16, -1/16, 8/16, -7/16, 1/16 },
-			{ -4/16, -8/16, -2/16, 4/16, -6/16, 2/16 },
-			{ -3/16, -8/16, -3/16, 3/16, -6/16, 3/16 },
-			{ -2/16, -8/16, -4/16, 2/16, -6/16, 4/16 },
+			{ -6/16, -8/16, -2/16, 6/16, -6/16, 2/16 },
+			{ -5/16, -8/16, 2/16, 5/16, -6/16, 3/16 },
+			{ -4/16, -8/16, 3/16, 4/16, -6/16, 4/16 },
+			{ -3/16, -8/16, 4/16, 3/16, -6/16, 5/16 },
+			{ -2/16, -8/16, 5/16, 2/16, -6/16, 16/16 },
+			{ -4/16, -8/16, 16/16, 4/16, -6/16, 20/16 },
+			{ -3/16, -8/16, 20/16, 3/16, -6/16, 21/16 },
 		},
 	},
 	on_place = splitter_place,
