@@ -1,7 +1,7 @@
 -- © 2017 numberZero
 -- License: GNU Lesser General Public License, version 2 (or any later version)
 
-local OVERLOAD_THRESHOLD = 20.0
+local OVERLOAD_THRESHOLD = 50.0
 
 local function splitter_rules_in(node)
 	return {
@@ -28,7 +28,7 @@ end
 local function splitter_in_action(pos, node, channel, msg)
 	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
 		minetest.dig_node(pos)
-		minetest.add_item(pos, node.name)
+		minetest.add_item(pos, "digiline_routing:splitter")
 		return
 	end
 	local off = minetest.facedir_to_dir(node.param2)
@@ -41,7 +41,7 @@ local function splitter_out_action(pos, node, channel, msg)
 	local master = vector.subtract(pos, off)
 	if digiline_routing.overheat.heat(master) > OVERLOAD_THRESHOLD then
 		minetest.dig_node(master)
-		minetest.add_item(master, node.name)
+		minetest.add_item(master, "digiline_routing:splitter")
 		return
 	end
 	digiline:receptor_send(master, splitter_rules_in(node), channel, msg)
