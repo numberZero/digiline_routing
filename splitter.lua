@@ -3,34 +3,17 @@
 
 local OVERLOAD_THRESHOLD = 20.0
 
-local BASE_RULES = {
-	[0] = {x = -1, y = 0, z = 0},
-	[1] = {x = 0, y = 0, z = 1},
-	[2] = {x = 1, y = 0, z = 0},
-	[3] = {x = 0, y = 0, z = -1},
-}
-
-local rules_in = {}
-local rules_out = {}
-
-for k = 0,3 do
-	rules_in[k] = {}
-	rules_out[k] = {}
--- 	for m = 0,2 do
--- 		table.insert(rules_in[k], BASE_RULES[(k + m + 3) % 4])
--- 		table.insert(rules_out[k], BASE_RULES[(k + m + 1) % 4])
--- 	end
-	table.insert(rules_in[k], BASE_RULES[(k) % 4])
-	table.insert(rules_in[k], BASE_RULES[(k + 2) % 4])
-	table.insert(rules_out[k], BASE_RULES[(k + 1) % 4])
-end
-
 local function splitter_rules_in(node)
-	return rules_in[node.param2]
+	return {
+		digiline_routing.get_base_rule(0, node.param2),
+		digiline_routing.get_base_rule(2, node.param2),
+	}
 end
 
 local function splitter_rules_out(node)
-	return rules_out[node.param2]
+	return {
+		digiline_routing.get_base_rule(1, node.param2),
+	}
 end
 
 local function splitter_place(...)

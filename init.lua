@@ -7,6 +7,7 @@ digiline_routing = {}
 local MODNAME = "digiline_routing"
 local MODPATH = minetest.get_modpath(MODNAME)
 
+dofile(MODPATH.."/util.lua")
 dofile(MODPATH.."/overheating.lua")
 dofile(MODPATH.."/multiblock.lua")
 dofile(MODPATH.."/diode.lua")

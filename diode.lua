@@ -3,26 +3,16 @@
 
 local OVERLOAD_THRESHOLD = 20.0
 
-local rules_in = {
-	[0] = {{x = -1, y = 0, z = 0}},
-	[1] = {{x = 0, y = 0, z = 1}},
-	[2] = {{x = 1, y = 0, z = 0}},
-	[3] = {{x = 0, y = 0, z = -1}},
-}
-
-local rules_out = {
-	[0] = {{x = 1, y = 0, z = 0}},
-	[1] = {{x = 0, y = 0, z = -1}},
-	[2] = {{x = -1, y = 0, z = 0}},
-	[3] = {{x = 0, y = 0, z = 1}},
-}
-
 local function diode_rules_in(node)
-	return rules_in[node.param2]
+	return {
+		digiline_routing.get_base_rule(0, node.param2),
+	}
 end
 
 local function diode_rules_out(node)
-	return rules_out[node.param2]
+	return {
+		digiline_routing.get_base_rule(2, node.param2),
+	}
 end
 
 local function diode_action(pos, node, channel, msg)
