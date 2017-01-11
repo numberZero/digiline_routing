@@ -72,6 +72,7 @@ minetest.register_node("digiline_routing:splitter", {
 	},
 	paramtype = "light",
 	paramtype2 = "facedir",
+	is_ground_content = false,
 	groups = {dig_immediate=2},
 	node_box = {
 		type = "fixed",
@@ -108,11 +109,14 @@ minetest.register_node("digiline_routing:splitter_b", {
 	},
 	paramtype = "light",
 	paramtype2 = "facedir",
+	is_ground_content = false,
+	pointable = false,
 	groups = {dig_immediate=2, not_in_creative_inventory=1},
 	node_box = {
 		type = "fixed",
-		fixed = {{ -1/32, -31/64, -7/16, 1/32, -29/64, 7/16 }}, -- hidden, but nonempty for the case of some bug
+		fixed = {},
 	},
+	drop = "",
 	after_destruct = digiline_routing.multiblock.dig2b,
 	digiline = {
 		effector = {

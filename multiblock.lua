@@ -32,20 +32,32 @@ digiline_routing.multiblock.build2 = function(node1, node2, itemstack, placer, p
 	minetest.set_node(pos, {name = node1, param2 = dir})
 	minetest.set_node(botpos, {name = node2, param2 = dir})
 
+	digiline:update_autoconnect(pos)
+	digiline:update_autoconnect(botpos)
+
 	if not minetest.setting_getbool("creative_mode") then
 		itemstack:take_item()
 	end
 	return itemstack, true
 end
 
+local removing_head = false
+
 digiline_routing.multiblock.dig2 = function(pos, node)
+	if removing_head then
+		error("Infinite recursion detected")
+	end
+	removing_head = true
 	local dir = minetest.facedir_to_dir(node.param2)
 	local tail = vector.add(pos, dir)
-	minetest.swap_node(tail, {name = "air"}) -- not remove_node
+	minetest.dig_node(tail)
+	removing_head = false
 end
 
 digiline_routing.multiblock.dig2b = function(pos, node)
 	local dir = minetest.facedir_to_dir(node.param2)
 	local head = vector.subtract(pos, dir)
-	minetest.remove_node(head)
+	if not removing_head then
+		minetest.dig_node(head)
+	end
 end
