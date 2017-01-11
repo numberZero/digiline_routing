@@ -90,6 +90,7 @@ minetest.register_node("digiline_routing:splitter", {
 	},
 	on_place = splitter_place,
 	after_destruct = splitter_cleanup,
+	on_rotate = digiline_routing.multiblock.rotate2,
 	digiline = {
 		effector = {
                         action = splitter_in_action,
@@ -118,6 +119,7 @@ minetest.register_node("digiline_routing:splitter_b", {
 	},
 	drop = "",
 	after_destruct = digiline_routing.multiblock.dig2b,
+	on_rotate = digiline_routing.multiblock.rotate2b,
 	digiline = {
 		effector = {
                         action = splitter_out_action,
