@@ -8,6 +8,8 @@ local function find_available_craftitem(...)
 			return name
 		end
 	end
+	-- make register_craft happy
+	return "-- unavailable --"
 end
 
 local digiline_wire = "digilines:wire_std_00000000"
