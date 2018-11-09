@@ -58,7 +58,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "digiline_routing:filter 2",
+	output = "digiline_routing:filter",
 	recipe = {
 		{steel, silver_wire, steel},
 		{connector, silicon, connector},
@@ -67,7 +67,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "digiline_routing:splitter 2",
+	output = "digiline_routing:splitter",
 	recipe = {
 		{connector, ""},
 		{silicon, connector},
