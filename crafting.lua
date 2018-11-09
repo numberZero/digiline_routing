@@ -51,7 +51,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "digiline_routing:diode 2",
+	output = "digiline_routing:diode",
 	recipe = {
 		{connector, silicon, connector},
 	}
