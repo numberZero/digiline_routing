@@ -132,7 +132,7 @@ minetest.register_node("digiline_routing:filter_b", {
 		fixed = {},
 	},
 	drop = "",
-	after_destruct = digiline_routing.multiblock.dig2b,
+	on_dig = digiline_routing.multiblock.dig2b,
 	on_rotate = digiline_routing.multiblock.rotate2b,
 	digiline = {
 		effector = {

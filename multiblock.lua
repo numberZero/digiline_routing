@@ -77,23 +77,23 @@ digiline_routing.multiblock.rotate2b = function(pos, node, user, mode, new_param
 	return false
 end
 
-local removing_head = false
-
 digiline_routing.multiblock.dig2 = function(pos, node)
-	if removing_head then
-		error("Infinite recursion detected")
-	end
-	removing_head = true
 	local dir = minetest.facedir_to_dir(node.param2)
 	local tail = vector.add(pos, dir)
-	minetest.dig_node(tail)
-	removing_head = false
+	minetest.remove_node(tail)
+	digiline:update_autoconnect(tail)
 end
 
-digiline_routing.multiblock.dig2b = function(pos, node)
+digiline_routing.multiblock.dig2b = function(pos, node, digger)
 	local dir = minetest.facedir_to_dir(node.param2)
 	local head = vector.subtract(pos, dir)
-	if not removing_head then
-		minetest.dig_node(head)
+	local node2 = minetest.get_node_or_nil(head)
+	if not node2 then -- master unloaded, let’s not break the structure
+		return
+	end
+	if node2.param2 == node.param2 then
+		minetest.node_dig(head, node2, digger)
+	else -- broken multinode structure, just remove it
+		minetest.remove_node(pos)
 	end
 end
