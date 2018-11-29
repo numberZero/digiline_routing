@@ -14,3 +14,16 @@ digiline_routing.get_base_rule = function(rule, param2)
 	end
 	return BASE_RULES[(rule + param2) % 4]
 end
+
+digiline_routing.is_protected = function(pos, player)
+	local name = player:get_player_name()
+	if not minetest.is_protected(pos, name) then
+		return false
+	end
+	-- FIXME: is this necessary?
+	if minetest.check_player_privs(name, "protection_bypass") then
+		return false
+	end
+	minetest.record_protection_violation(pos, name)
+	return true
+end

@@ -12,16 +12,14 @@ digiline_routing.multiblock.build2 = function(node1, node2, itemstack, placer, p
 		pos = pointed_thing.above
 	end
 
-	if minetest.is_protected(pos, placer:get_player_name()) and not minetest.check_player_privs(placer, "protection_bypass") then
-		minetest.record_protection_violation(pos, placer:get_player_name())
+	if digiline_routing.is_protected(pos, placer) then
 		return itemstack, false
 	end
 
 	local dir = minetest.dir_to_facedir(placer:get_look_dir())
 	local botpos = vector.add(pos, minetest.facedir_to_dir(dir))
 
-	if minetest.is_protected(botpos, placer:get_player_name()) and not minetest.check_player_privs(placer, "protection_bypass") then
-		minetest.record_protection_violation(botpos, placer:get_player_name())
+	if digiline_routing.is_protected(botpos, placer) then
 		return itemstack, false
 	end
 
@@ -45,11 +43,11 @@ digiline_routing.multiblock.rotate2 = function(pos, node, user, mode, new_param2
 	local dir = minetest.facedir_to_dir(node.param2)
 	local p = vector.add(pos, dir)
 	local node2 = minetest.get_node_or_nil(p)
-	if not node2 or not node.param2 == node2.param2 then
+	if not node2 or node.param2 ~= node2.param2 then
 		return false
 	end
-	if minetest.is_protected(p, user:get_player_name()) then
-		minetest.record_protection_violation(p, user:get_player_name())
+	-- protection at `pos` is checked by the screwdriver
+	if digiline_routing.is_protected(p, user) then
 		return false
 	end
 	if mode ~= screwdriver.ROTATE_FACE then
@@ -61,8 +59,7 @@ digiline_routing.multiblock.rotate2 = function(pos, node, user, mode, new_param2
 	if not node_def or not node_def.buildable_to then
 		return false
 	end
-	if minetest.is_protected(newp, user:get_player_name()) then
-		minetest.record_protection_violation(newp, user:get_player_name())
+	if digiline_routing.is_protected(newp, user) then
 		return false
 	end
 	node.param2 = new_param2
