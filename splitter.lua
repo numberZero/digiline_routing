@@ -84,6 +84,7 @@ minetest.register_node("digiline_routing:splitter", {
 		},
 	},
 })
+mesecon.register_mvps_stopper("digiline_routing:splitter")
 
 minetest.register_node("digiline_routing:splitter_b", {
 	description = "<<INTERNAL>> Digiline Splitter (Part B)",
@@ -113,3 +114,4 @@ minetest.register_node("digiline_routing:splitter_b", {
 		},
 	},
 })
+mesecon.register_mvps_stopper("digiline_routing:splitter_b")
