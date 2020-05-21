@@ -5,11 +5,14 @@ digiline_routing.multiblock = {}
 
 digiline_routing.multiblock.build2 = function(node1, node2, itemstack, placer, pointed_thing)
 	local under = pointed_thing.under
+	local above = pointed_thing.above
 	local pos
 	if minetest.registered_items[minetest.get_node(under).name].buildable_to then
 		pos = under
+	elseif minetest.registered_items[minetest.get_node(above).name].buildable_to then
+		pos = above
 	else
-		pos = pointed_thing.above
+		return itemstack, false
 	end
 
 	if digiline_routing.is_protected(pos, placer) then
