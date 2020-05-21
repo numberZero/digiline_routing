@@ -115,6 +115,7 @@ minetest.register_node("digiline_routing:filter", {
 		},
 	},
 })
+mesecon.register_mvps_stopper("digiline_routing:filter")
 
 minetest.register_node("digiline_routing:filter_b", {
 	description = "<<INTERNAL>> Digiline Filter (Part B)",
@@ -144,3 +145,4 @@ minetest.register_node("digiline_routing:filter_b", {
 		},
 	},
 })
+mesecon.register_mvps_stopper("digiline_routing:filter_b")
