@@ -46,9 +46,10 @@ local function filter_cleanup(pos, node)
 	digiline_routing.multiblock.dig2(pos, node)
 end
 
-local function filter_test(master, channel)
+local function filter_test(master, channel, node)
 	if digiline_routing.overheat.heat(master) > OVERLOAD_THRESHOLD then
-		minetest.dig_node(master)
+		minetest.remove_node(master)
+		filter_cleanup(master, node)
 		minetest.add_item(master, "digiline_routing:filter")
 		return false
 	end
@@ -56,7 +57,7 @@ local function filter_test(master, channel)
 end
 
 local function filter_in_action(pos, node, channel, msg)
-	if filter_test(pos, channel) then
+	if filter_test(pos, channel, node) then
 		local off = minetest.facedir_to_dir(node.param2)
 		local slave = vector.add(pos, off)
 		digiline:receptor_send(slave, filter_rules_out(node), channel, msg)
@@ -66,7 +67,7 @@ end
 local function filter_out_action(pos, node, channel, msg)
 	local off = minetest.facedir_to_dir(node.param2)
 	local master = vector.subtract(pos, off)
-	if filter_test(master, channel) then
+	if filter_test(master, channel, node) then
 		digiline:receptor_send(master, filter_rules_in(node), channel, msg)
 	end
 end

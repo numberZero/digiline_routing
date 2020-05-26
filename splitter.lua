@@ -27,7 +27,8 @@ end
 
 local function splitter_in_action(pos, node, channel, msg)
 	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
-		minetest.dig_node(pos)
+		minetest.remove_node(pos)
+		splitter_cleanup(pos, node)
 		minetest.add_item(pos, "digiline_routing:splitter")
 		return
 	end
@@ -40,7 +41,8 @@ local function splitter_out_action(pos, node, channel, msg)
 	local off = minetest.facedir_to_dir(node.param2)
 	local master = vector.subtract(pos, off)
 	if digiline_routing.overheat.heat(master) > OVERLOAD_THRESHOLD then
-		minetest.dig_node(master)
+		minetest.remove_node(master)
+		splitter_cleanup(master, node)
 		minetest.add_item(master, "digiline_routing:splitter")
 		return
 	end

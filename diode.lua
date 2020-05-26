@@ -18,7 +18,7 @@ end
 local function diode_action(pos, node, channel, msg)
 	if digiline_routing.overheat.heat(pos) > OVERLOAD_THRESHOLD then
 		digiline_routing.overheat.forget(pos)
-		minetest.dig_node(pos)
+		minetest.remove_node(pos)
 		minetest.add_item(pos, node.name)
 		return
 	end
