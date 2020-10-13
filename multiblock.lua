@@ -83,6 +83,17 @@ end
 digiline_routing.multiblock.dig2 = function(pos, node)
 	local dir = minetest.facedir_to_dir(node.param2)
 	local tail = vector.add(pos, dir)
+	local node2 = minetest.get_node_or_nil(tail)
+	if node2 then
+		local name2 = node2.name
+		if "air" ~= name2
+			and "vacuum:vacuum" ~= name2
+			and "planet_mars:airlight" ~= name2
+		then
+			-- abort, don't delete nodes
+			return
+		end
+	end
 	minetest.remove_node(tail)
 	digiline:update_autoconnect(tail)
 end
