@@ -81,7 +81,7 @@ digiline_routing.multiblock.rotate2b = function(pos, node, user, mode, new_param
 	return false
 end
 
-digiline_routing.partner_pos_or_nil = function(pos, node)
+digiline_routing.tail_pos_or_nil = function(pos, node)
 	local dirs = {
 		{ x = -1,z = 0},
 		{ x = 1, z = 0},
@@ -110,13 +110,13 @@ digiline_routing.partner_pos_or_nil = function(pos, node)
 end
 
 digiline_routing.multiblock.dig2 = function(pos, node)
-	local pos_tail = digiline_routing.partner_pos_or_nil(pos, node)
+	local tail_pos = digiline_routing.tail_pos_or_nil(pos, node)
 
 	-- nothing we can do if partner was not found
-	if not pos_tail then return end
+	if not tail_pos then return end
 
-	minetest.remove_node(pos_tail)
-	digiline:update_autoconnect(pos_tail)
+	minetest.remove_node(tail_pos)
+	digiline:update_autoconnect(tail_pos)
 end
 
 digiline_routing.multiblock.dig2b = function(pos, node, digger)
