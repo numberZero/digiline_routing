@@ -42,6 +42,7 @@ digiline_routing.multiblock.build2 = function(node1, node2, itemstack, placer, p
 	return itemstack, true
 end
 
+-- only ever called when using screwdriver:screwdriver
 digiline_routing.multiblock.rotate2 = function(pos, node, user, mode, new_param2)
 	local dir = minetest.facedir_to_dir(node.param2)
 	local p = vector.add(pos, dir)
@@ -80,11 +81,42 @@ digiline_routing.multiblock.rotate2b = function(pos, node, user, mode, new_param
 	return false
 end
 
+digiline_routing.tail_pos_or_nil = function(pos, node)
+	local dirs = {
+		{ x = -1,z = 0},
+		{ x = 1, z = 0},
+		{ x = 0, z = -1},
+		{ x = 0, z = 1}
+	}
+	local tail_pos
+	local tail_node
+	for _, dir in ipairs(dirs) do
+		dir.y = 0
+		tail_pos = vector.add(pos, dir)
+		tail_node = minetest.get_node_or_nil(tail_pos)
+		if tail_node and tail_node.name == node.name .. "_b" then
+			-- possible match, according to name
+			-- can't be a match if no param2
+			if nil ~= tail_node.param2 then
+				if minetest.dir_to_facedir(dir) == tail_node.param2 then
+					-- match found, return it's position
+					return tail_pos
+				end
+			end
+		end
+	end
+	-- nothing found
+	return nil
+end
+
 digiline_routing.multiblock.dig2 = function(pos, node)
-	local dir = minetest.facedir_to_dir(node.param2)
-	local tail = vector.add(pos, dir)
-	minetest.remove_node(tail)
-	digiline:update_autoconnect(tail)
+	local tail_pos = digiline_routing.tail_pos_or_nil(pos, node)
+
+	-- nothing we can do if partner was not found
+	if not tail_pos then return end
+
+	minetest.remove_node(tail_pos)
+	digiline:update_autoconnect(tail_pos)
 end
 
 digiline_routing.multiblock.dig2b = function(pos, node, digger)
@@ -100,3 +132,4 @@ digiline_routing.multiblock.dig2b = function(pos, node, digger)
 		minetest.remove_node(pos)
 	end
 end
+
