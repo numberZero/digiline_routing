@@ -42,6 +42,7 @@ digiline_routing.multiblock.build2 = function(node1, node2, itemstack, placer, p
 	return itemstack, true
 end
 
+-- only ever called when using screwdriver:screwdriver
 digiline_routing.multiblock.rotate2 = function(pos, node, user, mode, new_param2)
 	local dir = minetest.facedir_to_dir(node.param2)
 	local p = vector.add(pos, dir)
@@ -80,22 +81,42 @@ digiline_routing.multiblock.rotate2b = function(pos, node, user, mode, new_param
 	return false
 end
 
-digiline_routing.multiblock.dig2 = function(pos, node)
-	local dir = minetest.facedir_to_dir(node.param2)
-	local tail = vector.add(pos, dir)
-	local node2 = minetest.get_node_or_nil(tail)
-	if node2 then
-		local name2 = node2.name
-		if "air" ~= name2
-			and "vacuum:vacuum" ~= name2
-			and "planet_mars:airlight" ~= name2
-		then
-			-- abort, don't delete nodes
-			return
+digiline_routing.partner_pos_or_nil = function(pos, node)
+	local dirs = {
+		{ x = -1,z = 0},
+		{ x = 1, z = 0},
+		{ x = 0, z = -1},
+		{ x = 0, z = 1}
+	}
+	local tail_pos
+	local tail_node
+	for _, dir in ipairs(dirs) do
+		dir.y = 0
+		tail_pos = vector.add(pos, dir)
+		tail_node = minetest.get_node_or_nil(tail_pos)
+		if tail_node and tail_node.name == node.name .. "_b" then
+			-- possible match, according to name
+			-- can't be a match if no param2
+			if nil ~= tail_node.param2 then
+				if minetest.dir_to_facedir(dir) == tail_node.param2 then
+					-- match found, return it's position
+					return tail_pos
+				end
+			end
 		end
 	end
-	minetest.remove_node(tail)
-	digiline:update_autoconnect(tail)
+	-- nothing found
+	return nil
+end
+
+digiline_routing.multiblock.dig2 = function(pos, node)
+	local pos_tail = digiline_routing.partner_pos_or_nil(pos, node)
+
+	-- nothing we can do if partner was not found
+	if not pos_tail then return end
+
+	minetest.remove_node(pos_tail)
+	digiline:update_autoconnect(pos_tail)
 end
 
 digiline_routing.multiblock.dig2b = function(pos, node, digger)
@@ -111,3 +132,4 @@ digiline_routing.multiblock.dig2b = function(pos, node, digger)
 		minetest.remove_node(pos)
 	end
 end
+
